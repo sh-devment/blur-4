@@ -143,7 +143,6 @@ func main() {
 	mux.Handle("GET /media/", requireAuthHandler(mediaHandler()))
 	mux.Handle("GET /background.jpg", fileServer)
 	mux.Handle("GET /favicon.svg", fileServer)
-	mux.Handle("GET /favicon.png", fileServer)
 	mux.Handle("GET /shell.css", fileServer)
 	mux.Handle("GET /shell.js", fileServer)
 	mux.Handle("GET /app.css", fileServer)

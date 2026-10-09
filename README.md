@@ -1,6 +1,6 @@
-# blur 😴🎧📚
-
-![cover](./build/web/cover.png)
+<p align="center">
+  <img src="tools/blur-banner.svg" width="1000" alt="blur">
+</p>
 
 Плеер для длинных аудио — книг, подкастов и лекций. Появился из желания удобно засыпать под размеренное повествование.
 

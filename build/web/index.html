@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Blur</title>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
+  <title>blur</title>
+  <link rel="icon" href="/favicon.svg?v={{.Version}}" type="image/svg+xml" sizes="any" />
   <!-- <meta property="og:type"  content="website" />
-  <meta property="og:title" content="Blur" /> -->
-  <link rel="stylesheet" href="/shell.css" />
-  <link rel="stylesheet" href="/app.css" />
+  <meta property="og:title" content="blur" /> -->
+  <link rel="stylesheet" href="/shell.css?v={{.Version}}" />
+  <link rel="stylesheet" href="/app.css?v={{.Version}}" />
 </head>
 <body>
 
@@ -148,7 +148,7 @@
 {{end}}
 
 <audio id="audio" preload="auto"></audio>
-<script src="/shell.js"></script>
-<script src="/app.js"></script>
+<script src="/shell.js?v={{.Version}}"></script>
+<script src="/app.js?v={{.Version}}"></script>
 </body>
 </html>

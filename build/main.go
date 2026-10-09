@@ -29,10 +29,11 @@ var (
 )
 
 type pageData struct {
-	User   *User
-	Error  string
-	Domain string
-	Region string // ru | com — picks the UI language
+	User    *User
+	Error   string
+	Domain  string
+	Region  string // ru | com — picks the UI language
+	Version string // buildTime, appended to static URLs to bust browser caches
 }
 
 // domain is the ecosystem zone this instance serves. Every app sits on the same
@@ -88,7 +89,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	if uid := sessionUserID(r); uid != 0 {
 		user, _ = getUserByID(uid)
 	}
-	tmpl.Execute(w, pageData{User: user, Domain: domain, Region: region}) //nolint:errcheck
+	tmpl.Execute(w, pageData{User: user, Domain: domain, Region: region, Version: buildTime}) //nolint:errcheck
 }
 
 func main() {

@@ -27,7 +27,7 @@ jobs:
           # Имя приложения: repo-level variable, задаётся вручную (обязательно).
           APP: ${{ vars.APP }}
           # Какие переменные записать в $APP.env (всё ниже в этом блоке).
-          ENV_KEYS: REGION PORT AUTH_URL AUTH_INTERNAL APP_URL APP_TOKEN SECRET_KEY S3_BUCKET S3_KEY S3_SECRET
+          ENV_KEYS: REGION PORT AUTH_URL AUTH_INTERNAL APP_URL APP_TOKEN SECRET_KEY S3_ENDPOINT S3_REGION S3_BUCKET S3_KEY S3_SECRET S3_PUBLIC_URL
 
           # Регион наследуется из matrix — отдельно заводить не нужно.
           REGION: ${{ matrix.region }}
@@ -37,7 +37,11 @@ jobs:
           APP_URL: ${{ vars.APP_URL }}
           APP_TOKEN: ${{ secrets.APP_TOKEN }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          # Хранилище: любое S3-совместимое (ru — Yandex, com — Cloudflare R2).
+          S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
+          S3_REGION: ${{ vars.S3_REGION }}
           S3_BUCKET: ${{ vars.S3_BUCKET }}
           S3_KEY: ${{ secrets.S3_KEY }}
           S3_SECRET: ${{ secrets.S3_SECRET }}
+          S3_PUBLIC_URL: ${{ vars.S3_PUBLIC_URL }}
         run: ./bin/deploy.sh

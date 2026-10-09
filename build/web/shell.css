@@ -106,7 +106,7 @@ body {
   z-index: 101;
   display: none;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -119,19 +119,30 @@ body {
 .pi-sub   { font-size: 11px; color: var(--text-dim); word-break: break-all; }
 
 
-.pi-action {
-  display: block;
-  padding: 9px 12px;
+.pi-list {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--text-dim);
-  text-decoration: none;
-  font-size: 12px;
-  transition: border-color .15s, color .15s;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.pi-action:hover  { border-color: var(--border-active); color: var(--text); }
-.pi-logout:hover  { border-color: #5c2e2e; color: #e87a7a; }
+.pi-action {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  background: transparent;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background .15s, color .15s;
+}
+
+.pi-action + .pi-action { border-top: 1px solid var(--border); }
+.pi-action:hover  { background: rgba(124, 104, 208, 0.12); color: var(--neon); }
+.pi-logout        { color: #c97070; }
+.pi-logout:hover  { background: rgba(92, 46, 46, 0.35); color: #e87a7a; }
 
 /* ── LOGIN SCREEN ────────────────────────────────────────────────────── */
 

@@ -296,7 +296,9 @@ audio.addEventListener('error', () => {
       <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/>
       <line x1="2" y1="2" x2="22" y2="22"/>
     </svg>
-    <span class="offline-msg">Яндекс Хранилище недоступно,<br>попробуйте позже</span>
+    <span class="offline-msg">${document.documentElement.lang === 'en'
+      ? 'Storage is unavailable,<br>try again later'
+      : 'Яндекс Хранилище недоступно,<br>попробуйте позже'}</span>
   `;
   bgBlur.style.backgroundImage = '';
 });

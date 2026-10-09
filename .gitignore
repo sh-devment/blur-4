@@ -6,5 +6,5 @@ blur.db
 .DS_Store
 build/blur.db
 build/.DS_Store
-
+.claude
 media

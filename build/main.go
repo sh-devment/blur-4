@@ -32,15 +32,16 @@ type pageData struct {
 	User   *User
 	Error  string
 	Domain string
+	Region string // ru | com — picks the UI language
 }
 
 // domain is the ecosystem zone this instance serves. Every app sits on the same
 // subdomain in both zones, so sh-development.ru / .com links follow REGION
 // (ru | com, set by the deploy matrix). Empty REGION (local dev) means ru.
-var domain string
+var domain, region string
 
 func initDomain() {
-	region := os.Getenv("REGION")
+	region = os.Getenv("REGION")
 	if region == "" {
 		region = "ru"
 	}
@@ -87,7 +88,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	if uid := sessionUserID(r); uid != 0 {
 		user, _ = getUserByID(uid)
 	}
-	tmpl.Execute(w, pageData{User: user, Domain: domain}) //nolint:errcheck
+	tmpl.Execute(w, pageData{User: user, Domain: domain, Region: region}) //nolint:errcheck
 }
 
 func main() {
@@ -137,6 +138,7 @@ func main() {
 	mux.HandleFunc("GET /", handleIndex)
 	mux.HandleFunc("GET /login", handleLogin)
 	mux.HandleFunc("GET /logout", handleLogout)
+	mux.HandleFunc("GET /apps", handleOpenApps)
 	mux.HandleFunc("GET /api/tree", requireAuthHandler(handleTree))
 	mux.HandleFunc("GET /api/progress", requireAuthHandler(handleGetProgress))
 	mux.HandleFunc("POST /api/progress", requireAuthHandler(handleSaveProgress))

@@ -18,10 +18,31 @@ import (
 	"time"
 )
 
-const (
-	yandexEndpoint = "https://storage.yandexcloud.net"
-	yandexRegion   = "ru-central1"
-)
+// s3Config describes one S3-compatible storage. All of it comes from env, so
+// the same binary works with Yandex Object Storage (ru) and Cloudflare R2 (com).
+type s3Config struct {
+	Endpoint  string // API base for signed listing, e.g. https://storage.yandexcloud.net
+	Region    string // SigV4 region: ru-central1 for Yandex, auto for R2
+	Bucket    string
+	Key       string
+	Secret    string
+	PublicURL string // browser-facing base for files; object keys are appended to it
+}
+
+func loadS3Config() (s3Config, error) {
+	c := s3Config{
+		Endpoint:  strings.TrimRight(os.Getenv("S3_ENDPOINT"), "/"),
+		Region:    os.Getenv("S3_REGION"),
+		Bucket:    os.Getenv("S3_BUCKET"),
+		Key:       os.Getenv("S3_KEY"),
+		Secret:    os.Getenv("S3_SECRET"),
+		PublicURL: strings.TrimRight(os.Getenv("S3_PUBLIC_URL"), "/"),
+	}
+	if c.Endpoint == "" || c.Region == "" || c.Bucket == "" || c.Key == "" || c.Secret == "" || c.PublicURL == "" {
+		return c, fmt.Errorf("S3_ENDPOINT, S3_REGION, S3_BUCKET, S3_KEY, S3_SECRET and S3_PUBLIC_URL must be set")
+	}
+	return c, nil
+}
 
 // ── AWS Signature V4 helpers ───────────────────────────────────────────────
 
@@ -36,14 +57,14 @@ func hexSHA256(s string) string {
 	return hex.EncodeToString(h[:])
 }
 
-func signingKey(secret, date string) []byte {
+func signingKey(secret, date, region string) []byte {
 	k := hmacSHA256([]byte("AWS4"+secret), date)
-	k = hmacSHA256(k, yandexRegion)
+	k = hmacSHA256(k, region)
 	k = hmacSHA256(k, "s3")
 	return hmacSHA256(k, "aws4_request")
 }
 
-func signRequest(req *http.Request, key, secret string) {
+func signRequest(req *http.Request, key, secret, region string) {
 	now := time.Now().UTC()
 	date := now.Format("20060102")
 	datetime := now.Format("20060102T150405Z")
@@ -81,9 +102,9 @@ func signRequest(req *http.Request, key, secret string) {
 		payloadHash,
 	}, "\n")
 
-	credScope := date + "/" + yandexRegion + "/s3/aws4_request"
+	credScope := date + "/" + region + "/s3/aws4_request"
 	strToSign := "AWS4-HMAC-SHA256\n" + datetime + "\n" + credScope + "\n" + hexSHA256(canonReq)
-	sig := hex.EncodeToString(hmacSHA256(signingKey(secret, date), strToSign))
+	sig := hex.EncodeToString(hmacSHA256(signingKey(secret, date, region), strToSign))
 
 	req.Header.Set("Authorization", fmt.Sprintf(
 		"AWS4-HMAC-SHA256 Credential=%s/%s,SignedHeaders=%s,Signature=%s",
@@ -104,7 +125,11 @@ type s3Item struct {
 	Key string `xml:"Key"`
 }
 
-func listS3Objects(bucket, key, secret string) ([]string, error) {
+func listS3Objects(c s3Config) ([]string, error) {
+	base, err := url.Parse(c.Endpoint)
+	if err != nil || base.Host == "" {
+		return nil, fmt.Errorf("bad S3_ENDPOINT %q", c.Endpoint)
+	}
 	var allKeys []string
 	var contToken string
 
@@ -115,13 +140,13 @@ func listS3Objects(bucket, key, secret string) ([]string, error) {
 		}
 
 		u := &url.URL{
-			Scheme:   "https",
-			Host:     "storage.yandexcloud.net",
-			Path:     "/" + bucket,
+			Scheme:   base.Scheme,
+			Host:     base.Host,
+			Path:     "/" + c.Bucket,
 			RawQuery: params.Encode(),
 		}
 		req, _ := http.NewRequest("GET", u.String(), nil)
-		signRequest(req, key, secret)
+		signRequest(req, c.Key, c.Secret, c.Region)
 
 		resp, err := httpClient.Do(req)
 		if err != nil {
@@ -204,14 +229,12 @@ func (n *s3Node) toEntries() []*treeEntry {
 // ── updateTreeFromS3 ───────────────────────────────────────────────────────
 
 func updateTreeFromS3() error {
-	bucket := os.Getenv("S3_BUCKET")
-	key := os.Getenv("S3_KEY")
-	secret := os.Getenv("S3_SECRET")
-	if bucket == "" || key == "" || secret == "" {
-		return fmt.Errorf("S3_BUCKET, S3_KEY and S3_SECRET must be set")
+	c, err := loadS3Config()
+	if err != nil {
+		return err
 	}
 
-	keys, err := listS3Objects(bucket, key, secret)
+	keys, err := listS3Objects(c)
 	if err != nil {
 		return err
 	}
@@ -222,7 +245,7 @@ func updateTreeFromS3() error {
 			continue
 		}
 		parts := strings.Split(k, "/")
-		fileURL := yandexEndpoint + "/" + bucket + "/" + k
+		fileURL := c.PublicURL + "/" + k
 		root.insert(k, parts, fileURL)
 	}
 
@@ -239,6 +262,6 @@ func updateTreeFromS3() error {
 		return fmt.Errorf("save tree: %w", err)
 	}
 
-	log.Printf("--update: indexed %d objects from s3://%s", len(keys), bucket)
+	log.Printf("--update: indexed %d objects from s3://%s (%s)", len(keys), c.Bucket, c.Endpoint)
 	return nil
 }

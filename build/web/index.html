@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru">
+{{$en := eq .Region "com"}}
+<html lang="{{if $en}}en{{else}}ru{{end}}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -39,8 +40,11 @@
         <span class="pi-name">{{if .User.Name}}{{.User.Name}}{{else}}{{.User.AuthID}}{{end}}</span>
         {{if .User.Name}}<span class="pi-sub">{{.User.AuthID}}</span>{{end}}
       </div>
-      <a class="pi-action" href="https://github.com/shumilovsergey/blur-4/blob/main/README.md" target="_blank" rel="noopener">readme</a>
-      <a class="pi-action pi-logout" href="/logout">log out</a>
+      <div class="pi-list">
+        <a class="pi-action" href="/apps">apps</a>
+        <a class="pi-action" href="https://github.com/sh-devment/blur-4/blob/main/README.md" target="_blank" rel="noopener">readme</a>
+        <a class="pi-action pi-logout" href="/logout">{{if $en}}log out{{else}}выйти{{end}}</a>
+      </div>
     </div>
   </div>
 </nav>
@@ -123,11 +127,15 @@
     <div class="login-card">
       <div class="login-logo">BLUR</div>
       <a class="login-domain" href="https://{{.Domain}}" target="_blank" rel="noopener">{{.Domain}}</a>
-      <a class="login-btn" href="/login">войти</a>
+      <a class="login-btn" href="/login">{{if $en}}log in{{else}}войти{{end}}</a>
     </div>
   </div>
   <div class="app-about">
+    {{if $en}}
+    <p>A player for long audio files. It remembers where you stopped and lets you set the playback start time by hand.</p>
+    {{else}}
     <p>Плеер для длинных аудиофайлов. Запоминает место остановки и позволяет вручную указать время начала воспроизведения.</p>
+    {{end}}
   </div>
   <div class="login-divider">
     <span class="login-divider-dot"></span>

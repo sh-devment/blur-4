@@ -115,10 +115,10 @@ func signRequest(req *http.Request, key, secret, region string) {
 // ── S3 list objects ────────────────────────────────────────────────────────
 
 type listBucketResult struct {
-	XMLName               xml.Name  `xml:"ListBucketResult"`
-	Contents              []s3Item  `xml:"Contents"`
-	IsTruncated           bool      `xml:"IsTruncated"`
-	NextContinuationToken string    `xml:"NextContinuationToken"`
+	XMLName               xml.Name `xml:"ListBucketResult"`
+	Contents              []s3Item `xml:"Contents"`
+	IsTruncated           bool     `xml:"IsTruncated"`
+	NextContinuationToken string   `xml:"NextContinuationToken"`
 }
 
 type s3Item struct {

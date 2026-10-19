@@ -29,24 +29,10 @@ var (
 )
 
 type pageData struct {
-	User    *User
-	Error   string
-	Domain  string
-	Region  string // ru | com — picks the UI language
-	Version string // buildTime, appended to static URLs to bust browser caches
-}
-
-// domain is the ecosystem zone this instance serves. Every app sits on the same
-// subdomain in both zones, so sh-development.ru / .com links follow REGION
-// (ru | com, set by the deploy matrix). Empty REGION (local dev) means ru.
-var domain, region string
-
-func initDomain() {
-	region = os.Getenv("REGION")
-	if region == "" {
-		region = "ru"
-	}
-	domain = "sh-development." + region
+	User       *User
+	Error      string
+	Version    string // buildTime, appended to static URLs to bust browser caches
+	*regionDef        // Domain, Lang, Text… — see region.go
 }
 
 func initTemplate() {
@@ -89,7 +75,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	if uid := sessionUserID(r); uid != 0 {
 		user, _ = getUserByID(uid)
 	}
-	tmpl.Execute(w, pageData{User: user, Domain: domain, Region: region, Version: buildTime}) //nolint:errcheck
+	tmpl.Execute(w, pageData{User: user, Version: buildTime, regionDef: region}) //nolint:errcheck
 }
 
 func main() {
@@ -114,7 +100,7 @@ func main() {
 	authInternal = os.Getenv("AUTH_INTERNAL")
 	appURL = os.Getenv("APP_URL")
 	appToken = os.Getenv("APP_TOKEN")
-	initDomain()
+	initRegion()
 	mediaDir = os.Getenv("MEDIA_DIR")
 	if mediaDir == "" {
 		mediaDir = "./media"

@@ -296,9 +296,7 @@ audio.addEventListener('error', () => {
       <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/>
       <line x1="2" y1="2" x2="22" y2="22"/>
     </svg>
-    <span class="offline-msg">${document.documentElement.lang === 'en'
-      ? 'Storage is unavailable,<br>try again later'
-      : 'Яндекс Хранилище недоступно,<br>попробуйте позже'}</span>
+    <span class="offline-msg">${TEXT.storageDown.replace('\n', '<br>')}</span>
   `;
   bgBlur.style.backgroundImage = '';
 });
@@ -361,7 +359,7 @@ let autoplay = localStorage.getItem('autoplay') !== 'false';
 
 function updateAutoplayBtn() {
   btnAutoplay.classList.toggle('on', autoplay);
-  btnAutoplay.title = autoplay ? 'Autoplay: on' : 'Autoplay: off';
+  btnAutoplay.title = autoplay ? TEXT.autoplayOn : TEXT.autoplayOff;
 }
 updateAutoplayBtn();
 
@@ -381,7 +379,7 @@ fetch('/api/tree')
     urls.forEach(url => { new Image().src = url; });
   })
   .catch(() => {
-    treeRoot.innerHTML = '<div style="padding:20px;color:var(--text-dim)">Could not load library.</div>';
+    treeRoot.innerHTML = `<div style="padding:20px;color:var(--text-dim)">${TEXT.libraryError}</div>`;
   });
 
 } // end if (treeRoot)

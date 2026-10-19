@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-{{$en := eq .Region "com"}}
-<html lang="{{if $en}}en{{else}}ru{{end}}">
+<html lang="{{.Lang}}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -10,6 +9,7 @@
   <meta property="og:title" content="blur" /> -->
   <link rel="stylesheet" href="/shell.css?v={{.Version}}" />
   <link rel="stylesheet" href="/app.css?v={{.Version}}" />
+  <script>window.TEXT = {{.Text.JS}};</script>
 </head>
 <body>
 
@@ -22,10 +22,10 @@
 <nav class="navbar">
   <div class="nav-tabs">
     <button class="tab active" data-section="player">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:5px"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>Player
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:5px"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>{{.Text.TabPlayer}}
     </button>
     <button class="tab" data-section="library">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:5px"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>Library
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:5px"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>{{.Text.TabLibrary}}
     </button>
 
   </div>
@@ -41,9 +41,9 @@
         {{if .User.Name}}<span class="pi-sub">{{.User.AuthID}}</span>{{end}}
       </div>
       <div class="pi-list">
-        <a class="pi-action" href="/apps">apps</a>
-        <a class="pi-action" href="https://github.com/sh-devment/blur-4/blob/main/README.md" target="_blank" rel="noopener">readme</a>
-        <a class="pi-action pi-logout" href="/logout">{{if $en}}log out{{else}}выйти{{end}}</a>
+        <a class="pi-action" href="/apps">{{.Text.Apps}}</a>
+        <a class="pi-action" href="https://github.com/sh-devment/blur-4/blob/main/README.md" target="_blank" rel="noopener">{{.Text.Readme}}</a>
+        <a class="pi-action pi-logout" href="/logout">{{.Text.Logout}}</a>
       </div>
     </div>
   </div>
@@ -68,7 +68,7 @@
 
       <div id="controls" class="hidden">
         <div class="ctrl-extra" id="vol-wrap">
-          <button class="ctrl-btn" id="btn-vol" title="Volume">
+          <button class="ctrl-btn" id="btn-vol" title="{{.Text.Volume}}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <path id="vol-icon-path" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
             </svg>
@@ -80,14 +80,14 @@
           </div>
         </div>
         <div class="ctrl-cluster">
-          <button class="ctrl-btn" id="btn-prev" title="Previous">
+          <button class="ctrl-btn" id="btn-prev" title="{{.Text.Previous}}">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
           </button>
           <button class="ctrl-btn" id="btn-play">
             <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             <svg id="icon-pause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="hidden"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </button>
-          <button class="ctrl-btn" id="btn-next" title="Next">
+          <button class="ctrl-btn" id="btn-next" title="{{.Text.Next}}">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18 14.5 12 6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg>
           </button>
         </div>
@@ -106,7 +106,7 @@
 
       <div id="cover-art">
         <span class="cover-placeholder">♪</span>
-        <p class="idle-msg">Pick a track from the Library tab</p>
+        <p class="idle-msg">{{.Text.IdleMsg}}</p>
       </div>
 
     </div>
@@ -127,15 +127,11 @@
     <div class="login-card">
       <div class="login-logo">BLUR</div>
       <a class="login-domain" href="https://{{.Domain}}" target="_blank" rel="noopener">{{.Domain}}</a>
-      <a class="login-btn" href="/login">{{if $en}}log in{{else}}войти{{end}}</a>
+      <a class="login-btn" href="/login">{{.Text.Login}}</a>
     </div>
   </div>
   <div class="app-about">
-    {{if $en}}
-    <p>A player for long audio files. It remembers where you stopped and lets you set the playback start time by hand.</p>
-    {{else}}
-    <p>Плеер для длинных аудиофайлов. Запоминает место остановки и позволяет вручную указать время начала воспроизведения.</p>
-    {{end}}
+    <p>{{.Text.About}}</p>
   </div>
   <div class="login-divider">
     <span class="login-divider-dot"></span>

@@ -474,6 +474,8 @@ body { background: #000; position: relative; }
 .login-screen {
   position: relative;
   overflow: hidden;
+  height: 100dvh;
+  padding: 24px 20px 28px;
   background: #000;
 }
 
@@ -536,8 +538,8 @@ body { background: #000; position: relative; }
 
 .login-divider { position: relative; z-index: 2; }
 .login-divider::before,
-.login-divider::after { background: rgba(255, 255, 255, 0.4); }
-.login-divider-dot { border-color: rgba(255, 255, 255, 0.4); }
+.login-divider::after { background: rgba(255, 255, 255, 0.14); }
+.login-divider-dot { border-color: rgba(255, 255, 255, 0.3); }
 
 #tree-root { padding-bottom: 40px; }
 
